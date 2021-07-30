@@ -1,0 +1,1 @@
+const Phrase = require('../models/phrase.server.model');

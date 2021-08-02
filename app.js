@@ -62,12 +62,12 @@ app.get('/', function(req, res) {
     if (!!error) {
       console.log('error');
     }else {
-      console.log('fone');
+      console.log('done');
     }
-  })
+  });
 })
 
-app.listen(1333)
+app.listen(1337);
 
 
 

@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var mysql = require('mysql');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -39,3 +40,34 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
+
+
+var connection = mysql.createConnection({
+  host:'localhost',
+  user: "root",
+  password: '',
+  database: 'Kiribati'
+});
+
+connection.connect(function(error) {
+  if (!!error) {
+    console.log('error');
+  }else {
+    console.log('fone');
+  }
+});
+
+app.get('/', function(req, res) {
+  connection.query("select * from null_Table", function(error, rows, fields) {
+    if (!!error) {
+      console.log('error');
+    }else {
+      console.log('fone');
+    }
+  })
+})
+
+app.listen(1333)
+
+
+

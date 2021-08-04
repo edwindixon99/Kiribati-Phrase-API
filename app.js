@@ -60,13 +60,13 @@ var connection = mysql.createPool({
 
 app.get('/', function(req, res) {
   connection.getConnection(function(error, tempCont) {
-    if (!!error) {
+    if (error) {
       console.log('error');
     }else {
       console.log('done');
       tempCont.query("select * from null_Table", function(error, rows, fields) {
         tempCont.release();
-        if(!!error) {
+        if(error) {
           console.log('Error in the query');
         } else {
           res.json(rows)

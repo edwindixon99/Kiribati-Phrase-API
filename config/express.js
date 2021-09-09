@@ -12,8 +12,8 @@ module.exports = function () {
     app.use(express.raw({type: 'image/*', limit: '200mb'}));
 
     // ROUTES
-    require('../app/routes/backdoor.routes')(app);
-    require('../app/routes/questions.routes')(app);
+    // require('../app/routes/backdoor.routes')(app);
+    require('../app/routes/phrases-routes')(app);
     
     return app;
 

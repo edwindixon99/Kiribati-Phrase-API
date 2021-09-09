@@ -1,1 +1,0 @@
-const Points = require('../models/petitions.server.model');

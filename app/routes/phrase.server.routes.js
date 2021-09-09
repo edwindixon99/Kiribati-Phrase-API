@@ -1,1 +1,0 @@
-const phrase = require('../controllers/phrase.server.controller');

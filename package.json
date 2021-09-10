@@ -1,13 +1,13 @@
 {
     "name": "2021-phw",
-    "description": "Homework question API",
+    "description": "Kiribati Dictionary API",
     "homepage": "http://homework.questions.ap",
     "keywords": [
         "homework",
         "practise",
         "questions"
     ],
-    "author": "Ankur Patel ankurpatelnz@gmail.com",
+    "author": "Edwin Dixon",
     "main": "app.js",
     "version": "0.0.1",
     "dependencies": {
@@ -17,5 +17,10 @@
         "mysql2": "^2.1.0",
         "mz": "^2.7.0",
         "nodemon": "^2.0.12"
+    },
+    "devDependencies": {
+        "eslint": "^7.32.0",
+        "eslint-config-prettier": "^8.3.0",
+        "prettier": "2.4.0"
     }
 }

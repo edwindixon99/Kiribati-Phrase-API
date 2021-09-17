@@ -1,15 +1,20 @@
 const db = require('../../config/db')
 
-KIRIBATI_COLUMN = 'kiribati'
-ENGLISH_COLUMN = 'english'
+const KIRIBATI_COLUMN = 'kiribati'
+const ENGLISH_COLUMN = 'english'
+const UPVOTE_COLUMN = 'upvotes'
 
-exports.getKiriTranslation = async function (query) {
-    const connection = await db.getPool().getConnection()
-    let queryString =
-        'SELECT ' +
+const DOWNVOTE_COLUMN = 'downvotes'
+
+const queryGen = (query, lang) => {
+    let queryString ='SELECT ' +
         KIRIBATI_COLUMN +
         ',' +
         ENGLISH_COLUMN +
+        ',' +
+        UPVOTE_COLUMN +
+        ',' +
+        DOWNVOTE_COLUMN +
         ' FROM ' +
         'null_TABLE' +
         ' WHERE ' +
@@ -18,41 +23,31 @@ exports.getKiriTranslation = async function (query) {
         query.toLowerCase() +
         " %'"
     queryString +=
-        ' OR ' + KIRIBATI_COLUMN + " LIKE '" + query.toLowerCase() + "'"
+        ' OR ' + lang + " LIKE '" + query.toLowerCase() + "'"
     queryString +=
-        ' OR ' + KIRIBATI_COLUMN + " LIKE '" + query.toLowerCase() + " %'"
+        ' OR ' + lang + " LIKE '" + query.toLowerCase() + " %'"
     queryString +=
-        ' OR ' + KIRIBATI_COLUMN + " LIKE '% " + query.toLowerCase() + "'"
+        ' OR ' + lang + " LIKE '% " + query.toLowerCase() + "'"
+
+    return queryString;
+}
+
+exports.getKiriTranslation = async function (query) {
+    const connection = await db.getPool().getConnection()
+    const queryString = queryGen(query, KIRIBATI_COLUMN)
 
     const [rows] = await connection.query(queryString)
-    console.log(rows)
+    // console.log(rows)
     connection.release()
     return rows
 }
 
 exports.getEngTranslation = async function (query) {
     const connection = await db.getPool().getConnection()
-    let queryString =
-        'SELECT ' +
-        KIRIBATI_COLUMN +
-        ',' +
-        ENGLISH_COLUMN +
-        ' FROM ' +
-        'null_TABLE' +
-        ' WHERE ' +
-        ENGLISH_COLUMN +
-        " LIKE '% " +
-        query.toLowerCase() +
-        " %'"
-    queryString +=
-        ' OR ' + ENGLISH_COLUMN + " LIKE '" + query.toLowerCase() + "'"
-    queryString +=
-        ' OR ' + ENGLISH_COLUMN + " LIKE '" + query.toLowerCase() + " %'"
-    queryString +=
-        ' OR ' + ENGLISH_COLUMN + " LIKE '% " + query.toLowerCase() + "'"
+    const queryString = queryGen(query, ENGLISH_COLUMN)
 
     const [rows] = await connection.query(queryString)
-    console.log(rows)
+    // console.log(rows)
     connection.release()
     return rows
 }

@@ -1,5 +1,6 @@
 const db = require('../../config/db')
 
+const TRANSLATION_TABLE = 'translations'
 const KIRIBATI_COLUMN = 'kiribati'
 const ENGLISH_COLUMN = 'english'
 const UPVOTE_COLUMN = 'upvotes'
@@ -16,7 +17,7 @@ const queryGen = (query, lang) => {
         ',' +
         DOWNVOTE_COLUMN +
         ' FROM ' +
-        'null_TABLE' +
+        TRANSLATION_TABLE +
         ' WHERE ' +
         KIRIBATI_COLUMN +
         " LIKE '% " +

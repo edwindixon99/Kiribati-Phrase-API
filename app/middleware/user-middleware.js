@@ -15,9 +15,16 @@ exports.googleVerify = async function(token) {
             //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
         });
         const payload = ticket.getPayload();
-        const userid = payload['sub'];
+        // const userid = payload['sub'];
+        console.log(payload)
         // If request specified a G Suite domain:
         // const domain = payload['hd'];
-      }
-    verify().catch(console.error);
+        return payload
+    }
+    try {
+        return await verify()
+    } catch(err) {
+        console.log(err);
+    }
+    
 }

@@ -6,7 +6,7 @@ exports.oauthSignIn = async function(req, res) {
     try {
         const idToken = req.body.idtoken;
 
-        auth.googleVerify(idToken);
+        let googleUser = await auth.googleVerify(idToken);
     
         // let newUser = await checkUserNotIndb(idToken)
         res.statusMessage = "verified user"

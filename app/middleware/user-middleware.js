@@ -1,7 +1,7 @@
 const {OAuth2Client} = require('google-auth-library');
 
 // https://developers.google.com/identity/sign-in/web/backend-auth
-let CLIENT_ID = ""
+let CLIENT_ID = process.env.PROJECT_GOOGLE_CLIENT_ID;
 const client = new OAuth2Client(CLIENT_ID);
 
 

@@ -4,7 +4,7 @@ const auth = require('../middleware/user-middleware');
 exports.oauthSignIn = async function(req, res) {
 
     try {
-        const idToken = req.idtoken;
+        const idToken = req.body.idtoken;
 
         auth.googleVerify(idToken);
     

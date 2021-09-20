@@ -1,12 +1,12 @@
 const {OAuth2Client} = require('google-auth-library');
 
 // https://developers.google.com/identity/sign-in/web/backend-auth
+let CLIENT_ID = ""
+const client = new OAuth2Client(CLIENT_ID);
 
 
-
-
-exports.googleVerify = async function(CLIENT_ID) {
-    const client = new OAuth2Client(CLIENT_ID);
+exports.googleVerify = async function(token) {
+    
     async function verify() {
         const ticket = await client.verifyIdToken({
             idToken: token,

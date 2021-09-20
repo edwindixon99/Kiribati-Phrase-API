@@ -3,3 +3,4 @@
 /app/resources/table_schema.txt
 /app/resources/create_database.sql
 /app/resources/resample_database.sql
+app/middleware/user-middleware.js

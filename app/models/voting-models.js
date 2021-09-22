@@ -4,10 +4,9 @@ const TRANSLATION_TABLE = 'translations'
 const KIRIBATI_COLUMN = 'kiribati'
 const ENGLISH_COLUMN = 'english'
 const UPVOTE_COLUMN = 'upvotes'
-
 const DOWNVOTE_COLUMN = 'downvotes'
 
-const queryGen = (query, lang) => {
+const joinedQuery = (query, lang) => {
     let queryString ='SELECT ' +
         KIRIBATI_COLUMN +
         ',' +
@@ -33,22 +32,40 @@ const queryGen = (query, lang) => {
     return queryString;
 }
 
-exports.getKiriTranslation = async function (query) {
-    const connection = await db.getPool().getConnection()
-    const queryString = queryGen(query, KIRIBATI_COLUMN)
+const voteExists = async function(connection, queryParams) {
+    const queryString = 'select * from votes join translations t on t.ID = votes.translation_id join users u on u.id = votes.user_id where session_token=(?) and translation_id=(?)'
+    const [rows] = await connection.query(queryString, queryParams)
 
-    const [rows] = await connection.query(queryString)
-    // console.log(rows)
-    connection.release()
     return rows
 }
-
-exports.getEngTranslation = async function (query) {
+exports.addVoteEntry = async function (queryParams) {
     const connection = await db.getPool().getConnection()
-    const queryString = queryGen(query, ENGLISH_COLUMN)
 
-    const [rows] = await connection.query(queryString)
-    // console.log(rows)
+    const voteAlreadyExists = await voteExists(connection, queryParams);
+    
+    let status = 201;
+    let queryString = '';
+    const voteEntry = voteAlreadyExists[0];
+
+    if (voteEntry) {
+        console.log(voteEntry.vote_type)
+        const newVT = queryParams[2];
+        if (voteEntry.vote_type !== newVT) {
+            console.log(voteEntry)
+            queryString = 'update votes set vote_type=(?) where user_id=(select id from users where session_token=(?)) and translation_id=(?)'
+            await connection.query(queryString, [newVT, voteEntry.session_token, voteEntry.translation_id])
+            console.log("vote changed")
+        } else {
+            console.log("no change")
+        }
+          
+    } else {
+        queryString = 'insert into votes (user_id, translation_id, vote_type) values ((select users.id from users where session_token=(?)), (?), (?))'
+        await connection.query(queryString, queryParams)
+        console.log("vote added")
+    }
+    
     connection.release()
-    return rows
+    return status;
 }
+

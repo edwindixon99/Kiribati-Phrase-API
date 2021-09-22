@@ -2,29 +2,63 @@ const Votes = require('../models/voting-models')
 const UserMW = require('../middleware/user-middleware')
 
 
-votechecker
+validVote = async function(res, queryParams) {
+    const translationId = queryParams[0]
+    const sessionToken = queryParams[1]
+    if (!sessionToken) {
+        res.status(401).send();
+        return
+    }
+    if (!(await UserMW.isLoggedOn(sessionToken))) {
+        res.status(403).send();
+        return 
+    }
+    if (!translationId) {
+        res.status(400).send();
+        return
+    }
+    
+    return true;
+}
 exports.upvotePhrase = async function(req, res) {
     try {
         const translationId = req.params.id;
         const sessionToken = req.headers['x-authorization'];
-        if (!sessionToken) {
-            return res.status(401).send();
+        const queryParams = [sessionToken, translationId, 1];
+
+        if (!validVote(res, queryParams)) {
+            return
         }
-        if (!(await UserMW.isLoggedOn(sessionToken))) {
-            return res.status(403).send();
-        }
-        if (!translationId) {
-            return res.status(400).send();
-        }
-        queryParams = [translationId, se]
-        Votes.addVoteEntry(true);
-        res.status(200).send();
+
+
+        const status = await Votes.addVoteEntry(queryParams);
+        res.status(status).send();
 
     } catch(err) {
+        console.log(err)
         res.status(500).send();
     }
+}
 
 
+exports.downvotePhrase = async function(req, res) {
+    try {
+        const translationId = req.params.id;
+        const sessionToken = req.headers['x-authorization'];
+        const queryParams = [sessionToken, translationId, 0];
+
+        if (!validVote(res, queryParams)) {
+            return
+        }
+
+
+        const status = await Votes.addVoteEntry(queryParams);
+        res.status(status).send();
+
+    } catch(err) {
+        console.log(err)
+        res.status(500).send();
+    }
 }
 
 

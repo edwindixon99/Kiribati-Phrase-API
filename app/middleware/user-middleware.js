@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const Users = require('../models/users-models')
 
 
 exports.checkObjectHasRequiredKeys = function(requiredKeys, objectToCheck) {
@@ -34,4 +35,9 @@ exports.generateSessionToken = function() {
     return token;
     
 
+}
+
+exports.isLoggedOn = async function(token) {
+    const user = await Users.checkToken(token);
+    return (user)? true: false;
 }

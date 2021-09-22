@@ -14,6 +14,7 @@ module.exports = function () {
     // require('../app/routes/backdoor.routes')(app);
     require('../app/routes/phrases-routes')(app)
     require('../app/routes/users-routes')(app)
+    require('../app/routes/voting-routes')(app)
 
     return app
 }

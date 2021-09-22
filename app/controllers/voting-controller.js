@@ -31,7 +31,7 @@ exports.upvotePhrase = async function(req, res) {
         }
 
 
-        const status = await Votes.addVoteEntry(queryParams);
+        const status = await Votes.handleVoteEvent(queryParams);
         res.status(status).send();
 
     } catch(err) {
@@ -52,7 +52,7 @@ exports.downvotePhrase = async function(req, res) {
         }
 
 
-        const status = await Votes.addVoteEntry(queryParams);
+        const status = await Votes.handleVoteEvent(queryParams);
         res.status(status).send();
 
     } catch(err) {
@@ -61,4 +61,21 @@ exports.downvotePhrase = async function(req, res) {
     }
 }
 
+
+exports.removeVote = async function(req, res) {
+    try {
+        const translationId = req.params.id;
+        const sessionToken = req.headers['x-authorization'];
+        const queryParams = [sessionToken, translationId];
+        if (!validVote(res, queryParams)) {
+            return
+        }
+        await Votes.deleteVoteEntry(queryParams);
+        res.status(204).send();
+    } catch(err) {
+        console.log(err)
+        res.status(500).send();
+    }
+    
+}
 

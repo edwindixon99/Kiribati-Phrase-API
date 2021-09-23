@@ -13,28 +13,35 @@ const voteExists = async function(connection, queryParams) {
     return rows
 }
 
-const incrementVoteCount = async function(connection , voteType, translationId) {
-    const voteTypeString = getVoteTypeString(voteType);
-    const queryString = `update translations set ${voteTypeString} = ${voteTypeString} + 1 where id = ${translationId} `
+// const incrementVoteCount = async function(connection , voteType, translationId) {
+//     const voteTypeString = getVoteTypeString(voteType);
+//     const queryString = `update translations set ${voteTypeString} = ${voteTypeString} + 1 where id = ${translationId} `
 
-    await connection.query(queryString)
-}
+//     await connection.query(queryString)
+// }
 
-const decrementVoteCount = async function(connection , voteType, translationId) {
-    const voteTypeString = getVoteTypeString(voteType);
-    const queryString = `update translations set ${voteTypeString} = ${voteTypeString} - 1 where id = ${translationId} `
+// const decrementVoteCount = async function(connection , voteType, translationId) {
+//     const voteTypeString = getVoteTypeString(voteType);
+//     const queryString = `update translations set ${voteTypeString} = ${voteTypeString} - 1 where id = ${translationId} `
     
-    const [result] = await connection.query(queryString)
+//     const [result] = await connection.query(queryString)
 
+// }
+
+const getUserId = async function(connection, session_token) {
+    const [rows] = await connection.query('select users.id from users where session_token=(?)', session_token);
+    return rows[0].id;
 }
-
 
 const addVoteEntry = async function(connection, queryParams) {
-    let queryString = 'insert into votes (user_id, translation_id, vote_type) values ((select users.id from users where session_token=(?)), (?), (?))'
+    
+    const userId = await getUserId(connection, queryParams[0])
+    queryParams[0] = userId;
+    let queryString = 'insert into votes (user_id, translation_id, vote_type) values ((?), (?), (?))'
     await connection.query(queryString, queryParams)
     const voteType = queryParams[2];
     const translationId = queryParams[1];
-    await incrementVoteCount(connection, voteType, translationId);
+    // await incrementVoteCount(connection, voteType, translationId);
     // const voteTypeString = getVoteTypeString(voteType);
     // queryString = `update translations set ${voteTypeString} = ((select ${voteTypeString} from translations where translation_id = ${translationId}) + 1) where translation_id = ${translationId} `
 
@@ -48,8 +55,8 @@ const changeVoteEntry = async function(connection, newVT, voteEntry) {
     let queryString = 'update votes set vote_type=(?) where user_id=(select id from users where session_token=(?)) and translation_id=(?)'
     await connection.query(queryString, [newVT, voteEntry.session_token, voteEntry.translation_id])
 
-    await incrementVoteCount(connection, newVT, voteEntry.translation_id);
-    await decrementVoteCount(connection, oldVT, voteEntry.translation_id);
+    // await incrementVoteCount(connection, newVT, voteEntry.translation_id);
+    // await decrementVoteCount(connection, oldVT, voteEntry.translation_id);
 
     // console.log("vote changed")
 }
@@ -104,10 +111,11 @@ exports.deleteVoteEntry = async function(queryParams) {
     const voteEntry = voteAlreadyExists[0];
     // console.log(voteEntry)
     const voteType = voteEntry.vote_type
-    await decrementVoteCount(connection, voteType, voteEntry.translation_id);
+    // await decrementVoteCount(connection, voteType, voteEntry.translation_id);
 
-
-    const queryString = 'DELETE FROM Kiribati.votes where user_id=(select id from users where session_token=(?)) and translation_id=(?)'
+    const userId = await getUserId(connection, queryParams[0])
+    queryParams[0] = userId;
+    const queryString = 'DELETE FROM Kiribati.votes where user_id=(?) and translation_id=(?)'
     await connection.query(queryString, queryParams)
 
     connection.release()

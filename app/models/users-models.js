@@ -36,3 +36,17 @@ exports.removeSessionToken = async function(token) {
     connection.release()
    
 }
+
+exports.checkToken = async function(token) {
+    const connection = await db.getPool().getConnection()
+
+
+    const queryString = "select * from Kiribati.users where session_token= (?)"
+
+    const [rows] = await connection.query(queryString, token)
+
+    connection.release()
+
+    return rows;
+   
+}

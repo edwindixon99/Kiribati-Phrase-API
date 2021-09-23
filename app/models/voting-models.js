@@ -25,7 +25,7 @@ const decrementVoteCount = async function(connection , voteType, translationId) 
     const queryString = `update translations set ${voteTypeString} = ${voteTypeString} - 1 where id = ${translationId} `
     
     const [result] = await connection.query(queryString)
-    console.log(result);
+
 }
 
 
@@ -39,7 +39,7 @@ const addVoteEntry = async function(connection, queryParams) {
     // queryString = `update translations set ${voteTypeString} = ((select ${voteTypeString} from translations where translation_id = ${translationId}) + 1) where translation_id = ${translationId} `
 
     // await connection.query(queryString)
-    console.log("vote added")
+    // console.log("vote added")
 }
 
 const changeVoteEntry = async function(connection, newVT, voteEntry) {
@@ -51,7 +51,7 @@ const changeVoteEntry = async function(connection, newVT, voteEntry) {
     await incrementVoteCount(connection, newVT, voteEntry.translation_id);
     await decrementVoteCount(connection, oldVT, voteEntry.translation_id);
 
-    console.log("vote changed")
+    // console.log("vote changed")
 }
 
 const getVoteTypeString = function(voteType) {
@@ -61,7 +61,7 @@ const getVoteTypeString = function(voteType) {
     } else {
         voteTypeString = 'downvotes'
     }
-    console.log(voteTypeString)
+    // console.log(voteTypeString)
     return voteTypeString;
 }
 
@@ -73,18 +73,18 @@ exports.handleVoteEvent = async function (queryParams) {
     let status = 201;
     let queryString = '';
     const voteEntry = voteAlreadyExists[0];
-    console.log(voteEntry)
+    // console.log(voteEntry)
 
     if (voteEntry) {
 
-        console.log(voteEntry.vote_type)
+        // console.log(voteEntry.vote_type)
         const newVT = queryParams[2];
-        console.log(newVT)
-        console.log(voteEntry.vote_type)
+        // console.log(newVT)
+        // console.log(voteEntry.vote_type)
         if (voteEntry.vote_type !== newVT) {
             await changeVoteEntry(connection, newVT, voteEntry)
         } else {
-            console.log("no change")
+            // console.log("no change")
         }
           
     } else {
@@ -102,7 +102,7 @@ exports.deleteVoteEntry = async function(queryParams) {
     const voteAlreadyExists = await voteExists(connection, queryParams);
     
     const voteEntry = voteAlreadyExists[0];
-    console.log(voteEntry)
+    // console.log(voteEntry)
     const voteType = voteEntry.vote_type
     await decrementVoteCount(connection, voteType, voteEntry.translation_id);
 

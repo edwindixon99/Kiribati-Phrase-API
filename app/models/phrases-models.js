@@ -30,6 +30,11 @@ const queryGen = (query, lang) => {
     queryString +=
         ' OR ' + lang + " LIKE '% " + query.toLowerCase() + "'"
 
+    if (query.length > 2) {
+        queryString +=
+        ' OR ' + lang + " LIKE '" + query.toLowerCase() + "%'"
+    }
+    
     return queryString;
 }
 

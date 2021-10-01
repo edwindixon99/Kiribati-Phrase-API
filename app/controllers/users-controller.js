@@ -85,7 +85,11 @@ exports.login = async function(req, res) {
         
 
 
-        await Users.updateSessionToken(googleId, sessionToken)
+        const Updated = await Users.updateSessionToken(googleId, sessionToken)
+        if (Updated.changedRows == 0) {
+            return res.status(404).send();
+        }
+        
         // if (!(UserMW.checkObjectHasRequiredKeys(requiredKeys, userInfo))) {
         //     res.statusMessage = "Required keys not provided"
         //     return res.status(400).send();

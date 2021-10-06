@@ -141,7 +141,7 @@ exports.getVoteEntry = async function(queryParams) {
     
     const voteEntry = voteAlreadyExists[0];
     // console.log(voteEntry)
-    const voteType = voteEntry.vote_type
+    // const voteType = voteEntry.vote_type
     // await decrementVoteCount(connection, voteType, voteEntry.translation_id);
 
     const userId = await getUserId(connection, queryParams[0])

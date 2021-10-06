@@ -4,11 +4,14 @@ const TRANSLATION_TABLE = 'translations'
 const KIRIBATI_COLUMN = 'kiribati'
 const ENGLISH_COLUMN = 'english'
 const UPVOTE_COLUMN = 'upvotes'
+const ID_COLUMN = 'id'
 
 const DOWNVOTE_COLUMN = 'downvotes'
 
 const queryGen = (query, lang) => {
     let queryString ='SELECT ' +
+        ID_COLUMN +
+        ',' +
         KIRIBATI_COLUMN +
         ',' +
         ENGLISH_COLUMN +

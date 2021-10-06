@@ -12,6 +12,7 @@ const makeJsonList = function(phrases) {
     // console.log(phrases)
     for (let i = 0; i < phrases.length; i++) {
         phraseList.push({
+            id: phrases[i].id,
             kiribati: phrases[i].kiribati,
             english: phrases[i].english,
             rating: getRating(phrases[i])

@@ -79,3 +79,26 @@ exports.removeVote = async function(req, res) {
     
 }
 
+
+exports.getVoteType = async function(req, res) {
+    try {
+        const translationId = req.params.id;
+        const sessionToken = req.headers['x-authorization'];
+        const queryParams = [sessionToken, translationId];
+        if (!validVote(res, queryParams)) {
+            return
+        }
+        const data = await Votes.getVoteEntry(queryParams);
+        if (!data[0]) {
+            return res.status(404).send();
+        }
+        const voteType = data[0].vote_type
+        res.status(200).send({voteType});
+    } catch(err) {
+        console.log(err)
+        res.status(500).send();
+    }
+    
+}
+
+ 

@@ -101,4 +101,26 @@ exports.getVoteType = async function(req, res) {
     
 }
 
+exports.userVoteList = async function(req, res) {
+    try {
+        const sessionToken = req.headers['x-authorization'];
+        if (!sessionToken) {
+            res.status(401).send();
+            return
+        }
+        const data = await Votes.getUserVotes(sessionToken);
+        console.log(data)
+        let result = {};
+        for (let i=0; i < data.length; i++) {
+            let transId = data[i].translation_id;
+            result[transId] = data[i].vote_type
+        }
+        // const voteType = data[0].vote_type
+        res.status(200).send(result);
+    } catch(err) {
+        console.log(err)
+        res.status(500).send();
+    }
+}
+
  

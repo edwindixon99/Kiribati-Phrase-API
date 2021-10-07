@@ -152,3 +152,22 @@ exports.getVoteEntry = async function(queryParams) {
     connection.release()
     return rows
 } 
+
+
+
+exports.getUserVotes = async function(sessionToken) {
+    const connection = await db.getPool().getConnection()
+
+    
+    // console.log(voteEntry)
+    // const voteType = voteEntry.vote_type
+    // await decrementVoteCount(connection, voteType, voteEntry.translation_id);
+
+    const userId = await getUserId(connection, sessionToken)
+    // queryParams[0] = userId;
+    const queryString = 'select * FROM Kiribati.votes where user_id=(?)'
+    const [rows] = await connection.query(queryString, userId)
+
+    connection.release()
+    return rows
+} 

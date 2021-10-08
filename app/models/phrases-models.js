@@ -60,3 +60,12 @@ exports.getEngTranslation = async function (query) {
     connection.release()
     return rows
 }
+
+// exports.getSingleTranslation= async function(id) {
+//     const connection = await db.getPool().getConnection()
+
+//     const [rows] = await connection.query("select * from translations where id=(?)", id)
+//     // console.log(rows)
+//     connection.release()
+//     return rows
+// }

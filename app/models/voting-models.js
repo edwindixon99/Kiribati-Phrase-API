@@ -115,6 +115,7 @@ exports.deleteVoteEntry = async function(queryParams) {
 
     const userId = await getUserId(connection, queryParams[0])
     queryParams[0] = userId;
+    console.log(queryParams)
     const queryString = 'DELETE FROM Kiribati.votes where user_id=(?) and translation_id=(?)'
     await connection.query(queryString, queryParams)
 

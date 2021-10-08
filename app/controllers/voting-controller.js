@@ -3,8 +3,9 @@ const UserMW = require('../middleware/user-middleware')
 
 
 validVote = async function(res, queryParams) {
-    const translationId = queryParams[0]
-    const sessionToken = queryParams[1]
+    const translationId = queryParams[1]
+    const sessionToken = queryParams[0]
+    console.log(sessionToken)
     if (!sessionToken) {
         res.status(401).send();
         return
@@ -30,7 +31,6 @@ exports.upvotePhrase = async function(req, res) {
             return
         }
 
-
         const status = await Votes.handleVoteEvent(queryParams);
         res.status(status).send();
 
@@ -51,7 +51,6 @@ exports.downvotePhrase = async function(req, res) {
             return
         }
 
-
         const status = await Votes.handleVoteEvent(queryParams);
         res.status(status).send();
 
@@ -70,30 +69,10 @@ exports.removeVote = async function(req, res) {
         if (!validVote(res, queryParams)) {
             return
         }
+
         await Votes.deleteVoteEntry(queryParams);
+        console.log("success")
         res.status(204).send();
-    } catch(err) {
-        console.log(err)
-        res.status(500).send();
-    }
-    
-}
-
-
-exports.getVoteType = async function(req, res) {
-    try {
-        const translationId = req.params.id;
-        const sessionToken = req.headers['x-authorization'];
-        const queryParams = [sessionToken, translationId];
-        if (!validVote(res, queryParams)) {
-            return
-        }
-        const data = await Votes.getVoteEntry(queryParams);
-        if (!data[0]) {
-            return res.status(404).send();
-        }
-        const voteType = data[0].vote_type
-        res.status(200).send({voteType});
     } catch(err) {
         console.log(err)
         res.status(500).send();
@@ -108,6 +87,10 @@ exports.userVoteList = async function(req, res) {
             res.status(401).send();
             return
         }
+        console.log(sessionToken)
+        console.log(await UserMW.isLoggedOn(sessionToken))
+
+        console.log("hello")
         const data = await Votes.getUserVotes(sessionToken);
         console.log(data)
         let result = {};

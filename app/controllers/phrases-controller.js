@@ -103,3 +103,22 @@ exports.getEngPhrase = async function (req, res) {
         res.status(500).send(`ERROR getting users ${err}`)
     }
 }
+
+// exports.getTranslation = async function (req, res) {
+//     try {
+//         const id = req.params.id
+//         // console.log(kiriPhrase)
+//         let translation = await Phrases.getSingleTranslation(id)
+//         console.log(translation);
+//         if (!translation || translation.length == 0) {
+//             res.status(404).send()
+//         }
+        
+//         // console.log(phrases)
+//         // console.log(phraseList)
+        
+//         res.status(200).send(translation)
+//     } catch (err) {
+//         res.status(500).send(`ERROR getting users ${err}`)
+//     }
+// }

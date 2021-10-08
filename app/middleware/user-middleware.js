@@ -39,5 +39,6 @@ exports.generateSessionToken = function() {
 
 exports.isLoggedOn = async function(token) {
     const user = await Users.checkToken(token);
-    return (user)? true: false;
+    console.log(user)
+    return (user.length > 0)? true: false;
 }

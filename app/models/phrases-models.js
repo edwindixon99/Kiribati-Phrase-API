@@ -37,6 +37,7 @@ const queryGen = (query, lang) => {
         queryString +=
         ' OR ' + lang + " LIKE '" + query.toLowerCase() + "%'"
     }
+    queryString += "ORDER BY upvotes DESC, downvotes"
     
     return queryString;
 }

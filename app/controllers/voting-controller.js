@@ -90,6 +90,11 @@ exports.userVoteList = async function(req, res) {
         console.log(sessionToken)
         console.log(await UserMW.isLoggedOn(sessionToken))
 
+        if (!(await UserMW.isLoggedOn(sessionToken))) {
+            res.status(403).send();
+            return 
+        }
+        
         console.log("hello")
         const data = await Votes.getUserVotes(sessionToken);
         console.log(data)

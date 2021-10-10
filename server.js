@@ -3,7 +3,7 @@ const db = require('./config/db')
 const express = require('./config/express')
 
 const app = express()
-const port = 4941
+const port = 8081
 
 async function testDbConnection() {
     try {

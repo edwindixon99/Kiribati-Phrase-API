@@ -1,4 +1,5 @@
 const express = require('express')
+const cors = require('cors');
 
 module.exports = function () {
     // INITIALISE EXPRESS
@@ -9,6 +10,11 @@ module.exports = function () {
     app.use(express.json())
 
     app.use(express.raw({ type: 'image/*', limit: '200mb' }))
+
+    app.use( cors ({
+        origin: "*"
+        })
+    );
 
     // ROUTES
     // require('../app/routes/backdoor.routes')(app);

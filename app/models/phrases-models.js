@@ -4,11 +4,14 @@ const TRANSLATION_TABLE = 'translations'
 const KIRIBATI_COLUMN = 'kiribati'
 const ENGLISH_COLUMN = 'english'
 const UPVOTE_COLUMN = 'upvotes'
+const ID_COLUMN = 'id'
 
 const DOWNVOTE_COLUMN = 'downvotes'
 
 const queryGen = (query, lang) => {
     let queryString ='SELECT ' +
+        ID_COLUMN +
+        ',' +
         KIRIBATI_COLUMN +
         ',' +
         ENGLISH_COLUMN +
@@ -30,6 +33,12 @@ const queryGen = (query, lang) => {
     queryString +=
         ' OR ' + lang + " LIKE '% " + query.toLowerCase() + "'"
 
+    if (query.length > 2) {
+        queryString +=
+        ' OR ' + lang + " LIKE '" + query.toLowerCase() + "%'"
+    }
+    queryString += "ORDER BY upvotes DESC, downvotes"
+    
     return queryString;
 }
 
@@ -52,3 +61,12 @@ exports.getEngTranslation = async function (query) {
     connection.release()
     return rows
 }
+
+// exports.getSingleTranslation= async function(id) {
+//     const connection = await db.getPool().getConnection()
+
+//     const [rows] = await connection.query("select * from translations where id=(?)", id)
+//     // console.log(rows)
+//     connection.release()
+//     return rows
+// }

@@ -39,5 +39,8 @@ exports.generateSessionToken = function() {
 
 exports.isLoggedOn = async function(token) {
     const user = await Users.checkToken(token);
-    return (user)? true: false;
+    console.log(user)
+    console.log("hasldflas")
+    console.log(user.length > 0)
+    return (user.length > 0)? true: false;
 }

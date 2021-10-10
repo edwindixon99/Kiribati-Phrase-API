@@ -115,6 +115,7 @@ exports.deleteVoteEntry = async function(queryParams) {
 
     const userId = await getUserId(connection, queryParams[0])
     queryParams[0] = userId;
+    console.log(queryParams)
     const queryString = 'DELETE FROM Kiribati.votes where user_id=(?) and translation_id=(?)'
     await connection.query(queryString, queryParams)
 
@@ -133,3 +134,41 @@ exports.deleteVoteEntry = async function(queryParams) {
 
 //     return rows;
 // }
+
+exports.getVoteEntry = async function(queryParams) {
+    const connection = await db.getPool().getConnection()
+
+    const voteAlreadyExists = await voteExists(connection, queryParams);
+    
+    const voteEntry = voteAlreadyExists[0];
+    // console.log(voteEntry)
+    // const voteType = voteEntry.vote_type
+    // await decrementVoteCount(connection, voteType, voteEntry.translation_id);
+
+    const userId = await getUserId(connection, queryParams[0])
+    queryParams[0] = userId;
+    const queryString = 'select * FROM Kiribati.votes where user_id=(?) and translation_id=(?)'
+    const [rows] = await connection.query(queryString, queryParams)
+
+    connection.release()
+    return rows
+} 
+
+
+
+exports.getUserVotes = async function(sessionToken) {
+    const connection = await db.getPool().getConnection()
+
+    
+    // console.log(voteEntry)
+    // const voteType = voteEntry.vote_type
+    // await decrementVoteCount(connection, voteType, voteEntry.translation_id);
+
+    const userId = await getUserId(connection, sessionToken)
+    // queryParams[0] = userId;
+    const queryString = 'select * FROM Kiribati.votes where user_id=(?)'
+    const [rows] = await connection.query(queryString, userId)
+
+    connection.release()
+    return rows
+} 

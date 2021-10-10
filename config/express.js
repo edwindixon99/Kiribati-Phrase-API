@@ -18,6 +18,13 @@ module.exports = function () {
 
     // ROUTES
     // require('../app/routes/backdoor.routes')(app);
+    app.get('/', function (req, res) {
+        res.send('hello');
+    })
+    app.get(app.rootUrl + '/', function (req, res) {
+        res.send('hello');
+    })
+
     require('../app/routes/phrases-routes')(app)
     require('../app/routes/users-routes')(app)
     require('../app/routes/voting-routes')(app)

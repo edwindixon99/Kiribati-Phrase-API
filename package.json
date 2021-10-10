@@ -11,7 +11,7 @@
     "main": "server.js",
     "version": "0.0.1",
     "scripts": {
-        "deploy": "npm run build && npm run start",
+        "deploy": "npm run start",
         "serve": "nodemon server.js"
     },
     "dependencies": {

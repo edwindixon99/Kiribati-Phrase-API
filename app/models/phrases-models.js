@@ -1,3 +1,4 @@
+const { query } = require('express')
 const db = require('../../config/db')
 
 const TRANSLATION_TABLE = 'translations'
@@ -8,7 +9,7 @@ const ID_COLUMN = 'id'
 
 const DOWNVOTE_COLUMN = 'downvotes'
 
-const queryGen = (query, lang) => {
+const queryGen = (lang) => {
     let queryString ='SELECT ' +
         ID_COLUMN +
         ',' +
@@ -23,30 +24,31 @@ const queryGen = (query, lang) => {
         TRANSLATION_TABLE +
         ' WHERE ' +
         KIRIBATI_COLUMN +
-        " LIKE '% " +
-        query.toLowerCase() +
-        " %'"
+        " LIKE concat('% ', ? ,' %')"
     queryString +=
-        ' OR ' + lang + " LIKE '" + query.toLowerCase() + "'"
+        ' OR ' + lang + " LIKE ?"
     queryString +=
-        ' OR ' + lang + " LIKE '" + query.toLowerCase() + " %'"
+        ' OR ' + lang + " LIKE concat(?,' %')"
     queryString +=
-        ' OR ' + lang + " LIKE '% " + query.toLowerCase() + "'"
+        ' OR ' + lang + " LIKE concat('% ', ?)"
 
     if (query.length > 2) {
         queryString +=
-        ' OR ' + lang + " LIKE '" + query.toLowerCase() + "%'"
+        ' OR ' + lang + " LIKE concat(?, '%')"
     }
     queryString += "ORDER BY upvotes DESC, downvotes"
     
     return queryString;
 }
 
+
+
 exports.getKiriTranslation = async function (query) {
     const connection = await db.getPool().getConnection()
-    const queryString = queryGen(query, KIRIBATI_COLUMN)
-
-    const [rows] = await connection.query(queryString)
+    const queryString = queryGen(KIRIBATI_COLUMN)
+    const newparam = query.toLowerCase()
+    const newparams = [newparam, newparam, newparam, newparam, newparam]
+    const [rows] = await connection.query(queryString, newparams)
     // console.log(rows)
     connection.release()
     return rows
@@ -54,9 +56,11 @@ exports.getKiriTranslation = async function (query) {
 
 exports.getEngTranslation = async function (query) {
     const connection = await db.getPool().getConnection()
-    const queryString = queryGen(query, ENGLISH_COLUMN)
+    const queryString = queryGen(ENGLISH_COLUMN)
 
-    const [rows] = await connection.query(queryString)
+    const newparam = query.toLowerCase()
+    const newparams = [newparam, newparam, newparam, newparam, newparam]
+    const [rows] = await connection.query(queryString, newparams)
     // console.log(rows)
     connection.release()
     return rows

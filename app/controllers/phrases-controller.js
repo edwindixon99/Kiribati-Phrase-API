@@ -1,4 +1,5 @@
 const Phrases = require('../models/phrases-models')
+const UserMW = require('../middleware/user-middleware')
 
 
 const getRating = function(phrase) {
@@ -37,6 +38,35 @@ exports.getKiriPhrases = async function (req, res) {
             res.status(404).send()
         }
         res.status(200).send(phraseList)
+    } catch (err) {
+        res.status(500).send(`ERROR getting users ${err}`)
+    }
+}
+
+
+exports.addPhrase = async function (req, res) {
+    try {
+        const language = req.params.lang
+        const word = req.params.word
+        const translation = req.body.translation
+        const sessionToken = req.headers['x-authorization'];
+        console.log(language)
+        console.log(word)
+        console.log(translation)
+        if (!sessionToken) {
+            res.status(401).send();
+            return
+        }
+        if (!(await UserMW.isLoggedOn(sessionToken))) {
+            res.status(403).send();
+            return 
+        }
+        if (!(language === 'kiribati' || language === 'english')) {
+            res.status(404).send()
+        }
+        const phrases = await Phrases.addTranslation(sessionToken, language, word, translation)
+        console.log(phrases)
+        res.status(201).send()
     } catch (err) {
         res.status(500).send(`ERROR getting users ${err}`)
     }

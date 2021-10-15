@@ -9,7 +9,7 @@ const ID_COLUMN = 'id'
 
 const DOWNVOTE_COLUMN = 'downvotes'
 
-const queryGen = (lang) => {
+const queryGen = (query, lang, exact) => {
     let queryString ='SELECT ' +
         ID_COLUMN +
         ',' +
@@ -32,7 +32,7 @@ const queryGen = (lang) => {
     queryString +=
         ' OR ' + lang + " LIKE concat('% ', ?)"
 
-    if (query.length > 2) {
+    if (query.length > 2 && !(exact == "true")) {
         queryString +=
         ' OR ' + lang + " LIKE concat(?, '%')"
     }
@@ -43,9 +43,9 @@ const queryGen = (lang) => {
 
 
 
-exports.getKiriTranslation = async function (query) {
+exports.getKiriTranslation = async function (query, exact) {
     const connection = await db.getPool().getConnection()
-    const queryString = queryGen(KIRIBATI_COLUMN)
+    const queryString = queryGen(query, KIRIBATI_COLUMN, exact)
     const newparam = query.toLowerCase()
     const newparams = [newparam, newparam, newparam, newparam, newparam]
     const [rows] = await connection.query(queryString, newparams)
@@ -54,9 +54,9 @@ exports.getKiriTranslation = async function (query) {
     return rows
 }
 
-exports.getEngTranslation = async function (query) {
+exports.getEngTranslation = async function (query, exact) {
     const connection = await db.getPool().getConnection()
-    const queryString = queryGen(ENGLISH_COLUMN)
+    const queryString = queryGen(query, ENGLISH_COLUMN, exact)
 
     const newparam = query.toLowerCase()
     const newparams = [newparam, newparam, newparam, newparam, newparam]

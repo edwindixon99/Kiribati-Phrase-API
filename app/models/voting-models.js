@@ -1,5 +1,4 @@
 const db = require('../../config/db')
-const userMW = require('../middleware/user-middleware')
 
 const TRANSLATION_TABLE = 'translations'
 const KIRIBATI_COLUMN = 'kiribati'
@@ -29,14 +28,14 @@ const voteExists = async function(connection, queryParams) {
 
 // }
 
-// const getUserId = async function(connection, session_token) {
-//     const [rows] = await connection.query('select users.id from users where session_token=(?)', session_token);
-//     return rows[0].id;
-// }
+const getUserId = async function(connection, session_token) {
+    const [rows] = await connection.query('select users.id from users where session_token=(?)', session_token);
+    return rows[0].id;
+}
 
 const addVoteEntry = async function(connection, queryParams) {
     
-    const userId = await userMW.getUserId(connection, queryParams[0])
+    const userId = await getUserId(connection, queryParams[0])
     queryParams[0] = userId;
     let queryString = 'insert into votes (user_id, translation_id, vote_type) values ((?), (?), (?))'
     await connection.query(queryString, queryParams)
@@ -114,7 +113,7 @@ exports.deleteVoteEntry = async function(queryParams) {
     const voteType = voteEntry.vote_type
     // await decrementVoteCount(connection, voteType, voteEntry.translation_id);
 
-    const userId = await userMW.getUserId(connection, queryParams[0])
+    const userId = await getUserId(connection, queryParams[0])
     queryParams[0] = userId;
     console.log(queryParams)
     const queryString = 'DELETE FROM Kiribati.votes where user_id=(?) and translation_id=(?)'
@@ -146,7 +145,7 @@ exports.getVoteEntry = async function(queryParams) {
     // const voteType = voteEntry.vote_type
     // await decrementVoteCount(connection, voteType, voteEntry.translation_id);
 
-    const userId = await userMW.getUserId(connection, queryParams[0])
+    const userId = await getUserId(connection, queryParams[0])
     queryParams[0] = userId;
     const queryString = 'select * FROM Kiribati.votes where user_id=(?) and translation_id=(?)'
     const [rows] = await connection.query(queryString, queryParams)
@@ -165,7 +164,7 @@ exports.getUserVotes = async function(sessionToken) {
     // const voteType = voteEntry.vote_type
     // await decrementVoteCount(connection, voteType, voteEntry.translation_id);
 
-    const userId = await userMW.getUserId(connection, sessionToken)
+    const userId = await getUserId(connection, sessionToken)
     // queryParams[0] = userId;
     const queryString = 'select * FROM Kiribati.votes where user_id=(?)'
     const [rows] = await connection.query(queryString, userId)

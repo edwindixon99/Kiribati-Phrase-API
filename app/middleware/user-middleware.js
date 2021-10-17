@@ -44,8 +44,3 @@ exports.isLoggedOn = async function(token) {
     console.log(user.length > 0)
     return (user.length > 0)? true: false;
 }
-
-exports.getUserId = async function(connection, session_token) {
-    const [rows] = await connection.query('select users.id from users where session_token=(?)', session_token);
-    return rows[0].id;
-}

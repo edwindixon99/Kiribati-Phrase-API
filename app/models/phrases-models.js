@@ -1,5 +1,6 @@
 const { query } = require('express')
 const db = require('../../config/db')
+const userMW = require('../middleware/user-middleware')
 
 const TRANSLATION_TABLE = 'translations'
 const KIRIBATI_COLUMN = 'kiribati'
@@ -74,3 +75,25 @@ exports.getEngTranslation = async function (query, exact) {
 //     connection.release()
 //     return rows
 // }
+
+const orderparams = function(language, word, translation) {
+    if (language === 'kiribati') {
+        return [translation, word]
+    } else {
+        return [word, translation]
+    }
+}
+
+
+exports.addTranslation = async function (sessionToken, language, word, translation) {
+    const connection = await db.getPool().getConnection()
+    const userId = await userMW.getUserId(connection, sessionToken)
+    const queryString = "INSERT INTO translations (ENGLISH, KIRIBATI, author_id) values (?, ?, ?)"
+    const queryParams = orderparams(language, word, translation)
+    queryParams.push(userId)
+    console.log(queryParams)
+    const [rows] = await connection.query(queryString, queryParams)
+    // console.log(rows)
+    connection.release()
+    return rows
+}

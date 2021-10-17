@@ -43,7 +43,9 @@ exports.getKiriPhrases = async function (req, res) {
     }
 }
 
-
+const validSubmission = function(word, translation) {
+    return (word.length > 0 && translation.length > 0)
+}
 exports.addPhrase = async function (req, res) {
     try {
         const language = req.params.lang
@@ -62,13 +64,21 @@ exports.addPhrase = async function (req, res) {
             return 
         }
         if (!(language === 'kiribati' || language === 'english')) {
-            res.status(404).send()
+            return res.status(404).send()
+        }
+        if (!validSubmission(word, translation)) {
+            return res.status(400).send()
         }
         const phrases = await Phrases.addTranslation(sessionToken, language, word, translation)
         console.log(phrases)
         res.status(201).send()
     } catch (err) {
-        res.status(500).send(`ERROR getting users ${err}`)
+        if (err.errno === 1062) {
+            res.statusMessage = "Translation already exists"
+            res.status(400).send()    
+        }
+        console.log(err)
+        res.status(500).send(`${err}`)
     }
 }
 

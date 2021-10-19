@@ -49,12 +49,9 @@ const validSubmission = function(word, translation) {
 exports.addPhrase = async function (req, res) {
     try {
         const language = req.params.lang
-        const word = req.params.word
-        const translation = req.body.translation
+        const word = req.params.word.toLowerCase();
+        const translation = req.body.translation.toLowerCase();
         const sessionToken = req.headers['x-authorization'];
-        console.log(language)
-        console.log(word)
-        console.log(translation)
         if (!sessionToken) {
             res.status(401).send();
             return
@@ -70,7 +67,7 @@ exports.addPhrase = async function (req, res) {
             return res.status(400).send()
         }
         const phrases = await Phrases.addTranslation(sessionToken, language, word, translation)
-        console.log(phrases)
+
         res.status(201).send()
     } catch (err) {
         if (err.errno === 1062) {

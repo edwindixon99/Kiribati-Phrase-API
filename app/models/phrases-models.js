@@ -88,11 +88,18 @@ const orderparams = function(language, word, translation) {
 exports.addTranslation = async function (sessionToken, language, word, translation) {
     const connection = await db.getPool().getConnection()
     const userId = await userMW.getUserId(connection, sessionToken)
-    const queryString = "INSERT INTO translations (ENGLISH, KIRIBATI, author_id) values (?, ?, ?)"
-    const queryParams = orderparams(language, word, translation)
+    let queryString = "INSERT INTO translations (ENGLISH, KIRIBATI, author_id) values (?, ?, ?)"
+    let queryParams = orderparams(language, word, translation)
     queryParams.push(userId)
     console.log(queryParams)
     const [rows] = await connection.query(queryString, queryParams)
+
+    // Upvote the added translation
+    const translationId = rows.insertId
+    queryParams = [userId, translationId]
+    queryString = "INSERT INTO votes (user_id, translation_id, vote_type) values (?, ?, 1)"
+    await connection.query(queryString, queryParams)
+
     // console.log(rows)
     connection.release()
     return rows

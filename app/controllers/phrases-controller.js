@@ -164,3 +164,26 @@ exports.getEngPhrases = async function (req, res) {
 //         res.status(500).send(`ERROR getting users ${err}`)
 //     }
 // }
+
+exports.getRecent = async function (req, res) {
+    try {
+        let translationCount = req.query.count
+        
+        if (translationCount) {
+            if (!(/^\+?(0|[1-9]\d*)$/.test(translationCount))) {
+                return res.status(400).send()
+            }
+            translationCount = ((translationCount > 50)? 50: parseInt(translationCount))
+        } else {
+            translationCount = 50;
+        }
+        let phrases = await Phrases.getRecentTranslations(translationCount)
+        if (!phrases) {
+            res.status(404).send()
+        }
+        const phraseList = makeJsonList(phrases);
+        res.status(200).send(phraseList)
+    } catch (err) {
+        res.status(500).send(`ERROR getting users ${err}`)
+    }
+}

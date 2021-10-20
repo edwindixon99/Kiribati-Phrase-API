@@ -104,3 +104,26 @@ exports.addTranslation = async function (sessionToken, language, word, translati
     connection.release()
     return rows
 }
+
+
+exports.getRecentTranslations = async function (count) {
+    const connection = await db.getPool().getConnection()
+    const queryString = 'SELECT ' +
+    ID_COLUMN +
+    ',' +
+    KIRIBATI_COLUMN +
+    ',' +
+    ENGLISH_COLUMN +
+    ',' +
+    UPVOTE_COLUMN +
+    ',' +
+    DOWNVOTE_COLUMN +
+    ' FROM ' +
+    TRANSLATION_TABLE + ' ORDER BY ' + ID_COLUMN + ' DESC LIMIT ?'
+    console.log(queryString)
+    console.log(count)
+    const [rows] = await connection.query(queryString, count)
+    // console.log(rows)
+    connection.release()
+    return rows
+}

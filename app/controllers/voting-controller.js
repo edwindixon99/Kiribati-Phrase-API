@@ -2,32 +2,33 @@ const Votes = require('../models/voting-models')
 const UserMW = require('../middleware/user-middleware')
 
 
-validVote = async function(res, queryParams) {
-    const translationId = queryParams[1]
-    const sessionToken = queryParams[0]
-    console.log(sessionToken)
-    if (!sessionToken) {
-        res.status(401).send();
-        return
-    }
-    if (!(await UserMW.isLoggedOn(sessionToken))) {
-        res.status(403).send();
-        return 
-    }
-    if (!translationId) {
-        res.status(400).send();
-        return
-    }
+// validVote = async function(res, queryParams) {
+//     const translationId = queryParams[1]
+//     const sessionToken = queryParams[0]
+//     console.log(sessionToken)
+//     if (!sessionToken) {
+//         res.status(401).send();
+//         return
+//     }
+//     if (!(await UserMW.isLoggedOn(sessionToken))) {
+//         res.status(403).send();
+//         return 
+//     }
+//     if (!translationId) {
+//         res.status(400).send();
+//         return
+//     }
     
-    return true;
-}
+//     return true;
+// }
 exports.upvotePhrase = async function(req, res) {
     try {
         const translationId = req.params.id;
         const sessionToken = req.headers['x-authorization'];
         const queryParams = [sessionToken, translationId, 1];
 
-        if (!validVote(res, queryParams)) {
+       
+        if (! await UserMW.validTranslationRequest(res, queryParams)) {
             return
         }
 
@@ -47,7 +48,7 @@ exports.downvotePhrase = async function(req, res) {
         const sessionToken = req.headers['x-authorization'];
         const queryParams = [sessionToken, translationId, 0];
 
-        if (!validVote(res, queryParams)) {
+        if (! await UserMW.validTranslationRequest(res, queryParams)) {
             return
         }
 
@@ -66,7 +67,7 @@ exports.removeVote = async function(req, res) {
         const translationId = req.params.id;
         const sessionToken = req.headers['x-authorization'];
         const queryParams = [sessionToken, translationId];
-        if (!validVote(res, queryParams)) {
+        if (!await UserMW.validTranslationRequest(res, queryParams)) {
             return
         }
 

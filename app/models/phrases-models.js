@@ -87,7 +87,7 @@ const orderparams = function(language, word, translation) {
 
 exports.addTranslation = async function (sessionToken, language, word, translation) {
     const connection = await db.getPool().getConnection()
-    const userId = await userMW.getUserId(connection, sessionToken)
+    const userId = await userMW.getUserId(sessionToken)
     let queryString = "INSERT INTO translations (ENGLISH, KIRIBATI, author_id) values (?, ?, ?)"
     let queryParams = orderparams(language, word, translation)
     queryParams.push(userId)
@@ -124,6 +124,26 @@ exports.getRecentTranslations = async function (count) {
     console.log(count)
     const [rows] = await connection.query(queryString, count)
     // console.log(rows)
+    connection.release()
+    return rows
+}
+
+exports.getTranslationAuthor = async function(translationId) {
+    const connection = await db.getPool().getConnection()
+    const queryString = 'select author_id from translations where id = ?'
+    const [rows] = await connection.query(queryString, translationId)
+    connection.release()
+    console.log(rows)
+    return rows[0].author_id
+}
+
+
+exports.removeTranslation = async function (userId, translationId) {
+    const connection = await db.getPool().getConnection()
+    let queryString = "Delete from translations where author_id = ? and id = ?"
+
+    const [rows] = await connection.query(queryString, [userId, translationId])
+
     connection.release()
     return rows
 }

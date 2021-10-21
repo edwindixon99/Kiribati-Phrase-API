@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const db = require('../../config/db')
 const Users = require('../models/users-models')
 
 
@@ -37,7 +38,7 @@ exports.generateSessionToken = function() {
 
 }
 
-exports.isLoggedOn = async function(token) {
+const isLoggedOn = exports.isLoggedOn = async function(token) {
     const user = await Users.checkToken(token);
     console.log(user)
     console.log("hasldflas")
@@ -45,7 +46,33 @@ exports.isLoggedOn = async function(token) {
     return (user.length > 0)? true: false;
 }
 
-exports.getUserId = async function(connection, session_token) {
+exports.getUserId = async function(session_token) {
+    const connection = await db.getPool().getConnection()
     const [rows] = await connection.query('select users.id from users where session_token=(?)', session_token);
+    connection.release()
     return rows[0].id;
+}
+
+
+exports.validTranslationRequest = async function(res, queryParams) {
+    const translationId = queryParams[1]
+    const sessionToken = queryParams[0]
+    console.log(sessionToken)
+    if (!sessionToken) {
+        res.status(401).send();
+        return
+    }
+    console.log(sessionToken)
+    
+    if (!(await isLoggedOn(sessionToken))) {
+        res.status(403).send();
+        return 
+    }
+    console.log(translationId)
+    if (!translationId) {
+        res.status(400).send();
+        return
+    }
+    
+    return true;
 }

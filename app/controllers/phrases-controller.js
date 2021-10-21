@@ -34,7 +34,7 @@ exports.getKiriPhrases = async function (req, res) {
         const phraseList = makeJsonList(phrases);
 
         // console.log(phrases)
-        if (!phrases) {
+        if (!phrases || phrases.length === 0) {
             res.status(404).send()
         }
         res.status(200).send(phraseList)
@@ -111,7 +111,7 @@ exports.getEngPhrases = async function (req, res) {
             res.status(404).send()
         }
         let phrases = await Phrases.getEngTranslation(kiriPhrase, exactWord)
-        if (!phrases) {
+        if (!phrases|| phrases.length === 0) {
             res.status(404).send()
         }
         
@@ -178,11 +178,45 @@ exports.getRecent = async function (req, res) {
             translationCount = 50;
         }
         let phrases = await Phrases.getRecentTranslations(translationCount)
-        if (!phrases) {
+        if (!phrases || phrases.length === 0) {
             res.status(404).send()
         }
         const phraseList = makeJsonList(phrases);
         res.status(200).send(phraseList)
+    } catch (err) {
+        res.status(500).send(`ERROR getting users ${err}`)
+    }
+}
+
+exports.deleteTranslation = async function (req, res) {
+    try {
+        const translationId = req.params.id;
+        const sessionToken = req.headers['x-authorization'];
+    
+
+        if (! await UserMW.validTranslationRequest(res, [sessionToken, translationId])) {
+            return 
+        }
+
+
+        console.log("hello")
+        if (!(/^\+?(0|[1-9]\d*)$/.test(translationId))) {
+            return res.status(400).send()
+        }
+        const userId = await UserMW.getUserId(sessionToken)
+        const authorId = await Phrases.getTranslationAuthor(translationId)
+        console.log(userId)
+        console.log(authorId)
+        if (userId != authorId) {
+            return res.status(403).send()
+        }
+
+        let phrases = await Phrases.removeTranslation(userId, translationId)
+        if (!phrases || phrases.affectedRows === 0) {
+            res.status(404).send()
+        }
+        console.log(phrases)
+        res.status(204).send()
     } catch (err) {
         res.status(500).send(`ERROR getting users ${err}`)
     }

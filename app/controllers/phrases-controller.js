@@ -221,3 +221,34 @@ exports.deleteTranslation = async function (req, res) {
         res.status(500).send(`ERROR getting users ${err}`)
     }
 }
+
+exports.getUsersTranslations = async function (req, res) {
+    try {
+        const sessionToken = req.headers['x-authorization'];
+        if (!sessionToken) {
+            res.status(401).send();
+            return
+        }
+        console.log(sessionToken)
+        console.log(await UserMW.isLoggedOn(sessionToken))
+
+        if (!(await UserMW.isLoggedOn(sessionToken))) {
+            res.status(403).send();
+            return 
+        }
+        
+        console.log("hello")
+        const data = await Phrases.userTranslations(sessionToken);
+        console.log(data)
+        let result = {};
+        for (let i=0; i < data.length; i++) {
+            let transId = data[i].id;
+            result[transId] = true
+        }
+        // const voteType = data[0].vote_type
+        res.status(200).send(result);
+    } catch(err) {
+        console.log(err)
+        res.status(500).send();
+    }
+}

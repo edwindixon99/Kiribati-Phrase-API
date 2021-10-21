@@ -147,3 +147,15 @@ exports.removeTranslation = async function (userId, translationId) {
     connection.release()
     return rows
 }
+
+exports.userTranslations = async function (sessionToken) {
+    const connection = await db.getPool().getConnection()
+
+    const userId = await userMW.getUserId(sessionToken)
+    // queryParams[0] = userId;
+    const queryString = 'select id FROM Kiribati.translations where author_id=(?)'
+    const [rows] = await connection.query(queryString, userId)
+
+    connection.release()
+    return rows
+}

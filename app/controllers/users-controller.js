@@ -117,3 +117,48 @@ exports.logout = async function(req, res) {
 
 
 }
+
+
+exports.getInfo = async function(req, res) {
+    try {
+        console.log("hello")
+        const sessionToken = req.headers['x-authorization'];
+        if (!sessionToken) {
+            res.status(401).send();
+            return
+        }
+        console.log(sessionToken)
+        console.log(await UserMW.isLoggedOn(sessionToken))
+
+        if (!(await UserMW.isLoggedOn(sessionToken))) {
+            res.status(403).send();
+            return 
+        }
+        
+        console.log("hello")
+        let data = await Users.getUserVotes(sessionToken);
+        console.log(data)
+        let votingResult = {};
+        for (let i=0; i < data.length; i++) {
+            let transId = data[i].translation_id;
+            votingResult[transId] = data[i].vote_type
+        }
+
+        console.log("hello")
+        data = await Users.userTranslations(sessionToken);
+        console.log(data)
+        let translationsResult = {};
+        for (let j=0; j < data.length; j++) {
+            let transId = data[j].id;
+            translationsResult[transId] = true
+        }
+        // const voteType = data[0].vote_type
+
+        // const voteType = data[0].vote_type
+        const result = {"votes" : votingResult, "translations": translationsResult}
+        res.status(200).send(result);
+    } catch(err) {
+        console.log(err)
+        res.status(500).send();
+    }
+}

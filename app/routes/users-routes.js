@@ -5,4 +5,5 @@ module.exports = function (app) {
     app.route(app.rootUrl + '/register').post(users.register)
     app.route(app.rootUrl + '/login').post(users.login)
     app.route(app.rootUrl + '/logout').post(users.logout)
+    app.route(app.rootUrl + '/user/info').get(users.getInfo)
 }

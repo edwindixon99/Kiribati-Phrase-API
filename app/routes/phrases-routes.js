@@ -9,5 +9,5 @@ module.exports = function (app) {
     app.route(app.rootUrl + '/translations/recent').get(phrases.getRecent)
     app.route(app.rootUrl + '/:lang/:word').post(phrases.addPhrase)
     app.route(app.rootUrl + '/translations/:id').delete(phrases.deleteTranslation)
-    app.route(app.rootUrl + '/translations/').get(phrases.getUsersTranslations)
+    app.route(app.rootUrl + '/translations').get(phrases.getUsersTranslations)
 }

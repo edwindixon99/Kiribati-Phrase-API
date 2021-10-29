@@ -28,6 +28,7 @@ module.exports = function () {
     require('../app/routes/phrases-routes')(app)
     require('../app/routes/users-routes')(app)
     require('../app/routes/voting-routes')(app)
+    require('../app/routes/requested-routes')(app)
 
     return app
 }

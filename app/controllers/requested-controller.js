@@ -33,9 +33,23 @@ const makeJsonList = function(words) {
 }
 
 
-exports.getRequestedWords = async function(req, res) {
+exports.getRequestedEnglishWords = async function(req, res) {
     try {
-        const words = await Requested.getRequest()
+        const words = await Requested.getEnglishRequests()
+
+        const wordList = makeJsonList(words);
+        res.status(200).send(wordList);
+
+    } catch(err) {
+        console.log(err)
+        res.status(500).send();
+    }
+}
+
+
+exports.getRequestedKiribatiWords = async function(req, res) {
+    try {
+        const words = await Requested.getKiribatiRequests()
 
         const wordList = makeJsonList(words);
         res.status(200).send(wordList);

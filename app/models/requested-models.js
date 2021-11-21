@@ -15,10 +15,21 @@ exports.handleRequest = async function (queryParams) {
 }
 
 
-exports.getRequest = async function () {
+exports.getKiribatiRequests = async function () {
     const connection = await db.getPool().getConnection()
 
-    const query = "select * from requested order by number_of_requests DESC"
+    const query = "select * from requested where is_kiribati=1 order by number_of_requests DESC"
+
+    const [rows] = await connection.query(query)
+
+    connection.release()
+    return rows;
+}
+
+exports.getEnglishRequests = async function () {
+    const connection = await db.getPool().getConnection()
+
+    const query = "select * from requested where is_kiribati=0 is order by number_of_requests DESC"
 
     const [rows] = await connection.query(query)
 

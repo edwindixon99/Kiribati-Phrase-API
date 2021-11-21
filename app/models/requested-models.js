@@ -29,7 +29,7 @@ exports.getKiribatiRequests = async function () {
 exports.getEnglishRequests = async function () {
     const connection = await db.getPool().getConnection()
 
-    const query = "select * from requested where is_kiribati=0 is order by number_of_requests DESC"
+    const query = "select * from requested where is_kiribati=0 order by number_of_requests DESC"
 
     const [rows] = await connection.query(query)
 

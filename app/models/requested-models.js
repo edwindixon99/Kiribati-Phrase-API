@@ -18,7 +18,7 @@ exports.handleRequest = async function (queryParams) {
 exports.getKiribatiRequests = async function () {
     const connection = await db.getPool().getConnection()
 
-    const query = "select * from requested where is_kiribati=1 order by number_of_requests DESC"
+    const query = "select * from requested where is_kiribati=1 and not exists( select * from translations where kiribati = word) order by number_of_requests DESC, id DESC"
 
     const [rows] = await connection.query(query)
 
@@ -29,7 +29,7 @@ exports.getKiribatiRequests = async function () {
 exports.getEnglishRequests = async function () {
     const connection = await db.getPool().getConnection()
 
-    const query = "select * from requested where is_kiribati=0 order by number_of_requests DESC"
+    const query = "select * from requested where is_kiribati=0 and not exists( select * from translations where english = word) order by number_of_requests DESC, id DESC"
 
     const [rows] = await connection.query(query)
 
